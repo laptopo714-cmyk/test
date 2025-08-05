@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Educational Platform Footer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+            color: #64748b;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #e2e8f0;
+            padding: 3rem 0 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #64748b, transparent);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Platform Description Section */
+        .footer-section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .footer-section.platform-info {
+            grid-column: span 2;
+        }
+
+        .footer-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            border-radius: 2px;
+        }
+
+        .platform-description {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #cbd5e1;
+            max-width: 600px;
+        }
+
+        /* Navigation Links */
+        .nav-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .nav-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 400;
+            border-radius: 4px;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+            transform: translateX(-5px);
+            padding-right: 0.5rem;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 2px;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::before {
+            width: 20px;
+        }
+
+        /* Contact Information */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #cbd5e1;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item:hover {
+            color: #06b6d4;
+        }
+
+        .contact-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .contact-link {
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Developer Credit */
+        .developer-credit {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .developer-credit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .developer-credit:hover::before {
+            left: 100%;
+        }
+
+        .developer-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .developer-phone {
+            color: #06b6d4;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .developer-phone a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .developer-phone a:hover {
+            color: #0ea5e9;
+        }
+
+        /* Copyright */
+        .footer-bottom {
+            border-top: 1px solid #334155;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer-section:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .footer-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .footer-section:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .footer-section:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-section.platform-info {
+                grid-column: span 1;
+            }
+
+            .footer-title {
+                font-size: 1.3rem;
+            }
+
+            .platform-description {
+                font-size: 0.95rem;
+            }
+
+            .nav-links {
+                grid-template-columns: 1fr;
+            }
+
+            .developer-credit {
+                padding: 1.25rem;
+            }
+
+            .developer-name {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-container {
+                padding: 0 1rem;
+            }
+
+            .footer {
+                padding: 2rem 0 1rem;
+            }
+
+            .footer-title {
+                font-size: 1.2rem;
+            }
+
+            .platform-description {
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+
+            .contact-item {
+                font-size: 0.9rem;
+            }
+
+            .developer-credit {
+                padding: 1rem;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .footer {
+                background: #000;
+                color: #fff;
+            }
+
+            .nav-link:hover {
+                color: #fff;
+                background: #333;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .footer-section {
+                animation: none;
+            }
+
+            .nav-link,
+            .contact-item,
+            .developer-credit::before {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main content area (for demonstration) -->
+    <div class="main-content">
+        <h1>أكرم ابراهيم</h1>
+        <p>هذا مثال على المحتوى الرئيسي للموقع. التذييل أدناه يعرض التصميم المطلوب.</p>
+    </div>
+
+    <!-- Footer Component -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Platform Description -->
+                <div class="footer-section platform-info">
+                    <h3 class="footer-title">أكرم ابراهيم</h3>
+                    <p class="platform-description">
+                        منصة تعليمية رائدة تهدف إلى توفير أفضل الدورات التدريبية باللغة العربية لمساعدة الطلاب على تطوير
+                        مهاراتهم وتحقيق أهدافهم المهنية والشخصية.
+                    </p>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="footer-section">
+                    <h3 class="footer-title">الصفحات</h3>
+                    <div class="nav-links">
+                        <a href="/about" class="nav-link">من نحن</a>
+                        <a href="/contact" class="nav-link">اتصل بنا</a>
+                        <a href="/help" class="nav-link">المساعدة</a>
+                        <a href="/support" class="nav-link">تواصل معنا</a>
+                        <a href="/privacy-policy" class="nav-link">سياسة الخصوصية</a>
+                        <a href="/terms" class="nav-link">شروط الاستخدام</a>
+                        <a href="/cookies" class="nav-link">سياسة الكوكيز</a>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="footer-section">
+                    <h3 class="footer-title">معلومات التواصل</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <a href="mailto:info@arabiclearning.com" class="contact-link">info@arabiclearning.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <a href="tel:+966501234567" class="contact-link">+966 50 123 4567</a>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <span>الرياض، المملكة العربية السعودية</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Developer Credit -->
+                <div class="footer-section">
+                    <div class="developer-credit">
+                        <div class="developer-name">
+                            <span>👨‍💻</span>
+                            <span>تطوير: كريم عطية عطية</span>
+                        </div>
+                        <div class="developer-phone">
+                            <span>📞</span>
+                            <a href="tel:01095288373">01095288373</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="footer-bottom">
+                <p>© 2025 أكرم ابراهيم. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

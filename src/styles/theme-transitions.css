@@ -1,0 +1,282 @@
+/* Theme Transition Styles - انتقالات سلسة بين الأوضاع */
+
+/* منع الوميض عند تحميل الصفحة */
+html {
+  color-scheme: light dark;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* انتقالات سلسة للعناصر الأساسية */
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات خاصة للـ body */
+body {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للعناصر التفاعلية */
+button,
+input,
+textarea,
+select,
+a {
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للكروت والعناصر المرتفعة */
+.MuiCard-root,
+.MuiPaper-root,
+.MuiDialog-paper,
+.MuiMenu-paper,
+.MuiPopover-paper {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* انتقالات للنصوص */
+.MuiTypography-root,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div {
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للأيقونات */
+.MuiSvgIcon-root,
+svg {
+  transition:
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للحدود والخطوط */
+.MuiDivider-root,
+hr {
+  transition:
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ AppBar والـ Toolbar */
+.MuiAppBar-root,
+.MuiToolbar-root {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* انتقالات للجداول */
+.MuiTable-root,
+.MuiTableHead-root,
+.MuiTableBody-root,
+.MuiTableRow-root,
+.MuiTableCell-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للنماذج */
+.MuiTextField-root,
+.MuiOutlinedInput-root,
+.MuiInputBase-root,
+.MuiFormControl-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للأزرار */
+.MuiButton-root,
+.MuiIconButton-root,
+.MuiFab-root {
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* انتقالات للـ Chips والـ Badges */
+.MuiChip-root,
+.MuiBadge-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ Drawer والـ Sidebar */
+.MuiDrawer-paper,
+.MuiList-root,
+.MuiListItem-root,
+.MuiListItemButton-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ Accordion */
+.MuiAccordion-root,
+.MuiAccordionSummary-root,
+.MuiAccordionDetails-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ Tabs */
+.MuiTabs-root,
+.MuiTab-root,
+.MuiTabPanel-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ Stepper */
+.MuiStepper-root,
+.MuiStep-root,
+.MuiStepLabel-root,
+.MuiStepContent-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ Progress والـ Loading */
+.MuiCircularProgress-root,
+.MuiLinearProgress-root,
+.MuiSkeleton-root {
+  transition:
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ Tooltip */
+.MuiTooltip-tooltip {
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* انتقالات للـ Snackbar */
+.MuiSnackbar-root,
+.MuiAlert-root {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للعناصر المخصصة */
+.glass-morphism,
+.card-3d,
+.arabic-card,
+.arabic-btn,
+.arabic-input,
+.arabic-alert {
+  transition:
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* انتقالات للـ scrollbar */
+::-webkit-scrollbar,
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+  transition:
+    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* تحسين الأداء للانتقالات */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* انتقالات خاصة للوضع الليلي */
+[data-theme="dark"] * {
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-theme="light"] * {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* تأثيرات خاصة عند التبديل */
+.theme-switching {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* منع الوميض في المتصفحات القديمة */
+@supports not (color-scheme: dark) {
+  html {
+    background-color: #ffffff;
+  }
+
+  html[data-theme="dark"] {
+    background-color: #0d0d0f;
+  }
+}
+
+/* تحسينات للطباعة */
+@media print {
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    background: white !important;
+    color: black !important;
+  }
+}

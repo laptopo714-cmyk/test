@@ -1,0 +1,421 @@
+/* Arabic RTL Dark Theme Enhancements */
+
+/* Enhanced Arabic Typography for Dark Mode */
+[data-theme="dark"] {
+  /* Arabic Font Improvements */
+  --arabic-font-primary: 'Cairo', 'Amiri', 'Noto Sans Arabic', 'Tajawal', sans-serif;
+  --arabic-font-secondary: 'Tajawal', 'Cairo', 'Noto Sans Arabic', sans-serif;
+  --arabic-font-decorative: 'Amiri', 'Scheherazade New', 'Cairo', serif;
+
+  /* Arabic Text Shadows for Better Readability */
+  --arabic-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --arabic-text-glow: 0 0 8px rgba(124, 124, 232, 0.3);
+
+  /* Arabic Spacing Adjustments */
+  --arabic-letter-spacing: 0.02em;
+  --arabic-word-spacing: 0.1em;
+  --arabic-line-height: 1.8;
+}
+
+/* Enhanced Arabic Text Rendering */
+[data-theme="dark"] .arabic-text {
+  font-family: var(--arabic-font-primary);
+  letter-spacing: var(--arabic-letter-spacing);
+  word-spacing: var(--arabic-word-spacing);
+  line-height: var(--arabic-line-height);
+  text-shadow: var(--arabic-text-shadow);
+  font-feature-settings: 'liga' 1, 'calt' 1, 'kern' 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enhanced Arabic Headings */
+[data-theme="dark"] .arabic-heading {
+  font-family: var(--arabic-font-decorative);
+  font-weight: 700;
+  color: #f0f0f2;
+  text-shadow: var(--arabic-text-glow);
+  background: linear-gradient(135deg, #9999ff 0%, #d4b3e8 50%, #8dd4c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(153, 153, 255, 0.3));
+}
+
+/* Enhanced Arabic Body Text */
+[data-theme="dark"] .arabic-body {
+  font-family: var(--arabic-font-secondary);
+  color: #bababf;
+  text-shadow: var(--arabic-text-shadow);
+  line-height: var(--arabic-line-height);
+}
+
+/* Enhanced Arabic Navigation */
+[data-theme="dark"] .arabic-nav {
+  font-family: var(--arabic-font-primary);
+  font-weight: 600;
+  color: #bababf;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+[data-theme="dark"] .arabic-nav:hover {
+  color: #f0f0f2;
+  text-shadow: var(--arabic-text-glow);
+}
+
+[data-theme="dark"] .arabic-nav::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #7c7ce8, #b491d4);
+  transition: width 0.3s ease;
+}
+
+[data-theme="dark"] .arabic-nav:hover::after {
+  width: 100%;
+}
+
+/* Enhanced Arabic Buttons */
+[data-theme="dark"] .arabic-btn {
+  font-family: var(--arabic-font-primary);
+  font-weight: 600;
+  background: linear-gradient(135deg, #7c7ce8 0%, #b491d4 50%, #6bb6a7 100%);
+  color: white;
+  border: 1px solid rgba(153, 153, 255, 0.3);
+  border-radius: 25px;
+  padding: 12px 32px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 4px 15px rgba(124, 124, 232, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .arabic-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: right 0.8s ease;
+}
+
+[data-theme="dark"] .arabic-btn:hover::before {
+  right: 100%;
+}
+
+[data-theme="dark"] .arabic-btn:hover {
+  background: linear-gradient(135deg, #9999ff 0%, #d4b3e8 50%, #8dd4c7 100%);
+  box-shadow:
+    0 8px 25px rgba(124, 124, 232, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Enhanced Arabic Cards */
+[data-theme="dark"] .arabic-card {
+  background: linear-gradient(145deg, rgba(26, 26, 31, 0.9), rgba(42, 42, 53, 0.7));
+  border: 1px solid rgba(124, 124, 232, 0.2);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.7),
+    0 1px 8px rgba(124, 124, 232, 0.1),
+    inset 0 1px 0 rgba(153, 153, 255, 0.1);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .arabic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(124, 124, 232, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(180, 145, 212, 0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .arabic-card:hover::before {
+  opacity: 1;
+}
+
+[data-theme="dark"] .arabic-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(124, 124, 232, 0.4);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.8),
+    0 10px 25px rgba(124, 124, 232, 0.3),
+    inset 0 1px 0 rgba(153, 153, 255, 0.2);
+}
+
+/* Enhanced Arabic Forms */
+[data-theme="dark"] .arabic-form {
+  background: rgba(26, 26, 31, 0.8);
+  border: 1px solid rgba(124, 124, 232, 0.2);
+  border-radius: 15px;
+  padding: 32px;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(153, 153, 255, 0.1);
+}
+
+[data-theme="dark"] .arabic-input {
+  font-family: var(--arabic-font-primary);
+  background: rgba(26, 26, 31, 0.8);
+  border: 1px solid rgba(124, 124, 232, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #f0f0f2;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(153, 153, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .arabic-input:focus {
+  border-color: #7c7ce8;
+  box-shadow:
+    0 0 0 3px rgba(124, 124, 232, 0.2),
+    0 4px 15px rgba(124, 124, 232, 0.3),
+    inset 0 1px 0 rgba(153, 153, 255, 0.2);
+  outline: none;
+  background: rgba(26, 26, 31, 0.9);
+}
+
+[data-theme="dark"] .arabic-input::placeholder {
+  color: #7a7a8a;
+  font-style: italic;
+}
+
+/* Enhanced Arabic Labels */
+[data-theme="dark"] .arabic-label {
+  font-family: var(--arabic-font-primary);
+  font-weight: 600;
+  color: #bababf;
+  margin-bottom: 8px;
+  display: block;
+  text-shadow: var(--arabic-text-shadow);
+}
+
+/* Enhanced Arabic Alerts */
+[data-theme="dark"] .arabic-alert {
+  font-family: var(--arabic-font-primary);
+  background: rgba(26, 26, 31, 0.9);
+  border: 1px solid rgba(124, 124, 232, 0.3);
+  border-radius: 12px;
+  padding: 16px 20px;
+  color: #f0f0f2;
+  backdrop-filter: blur(15px);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(153, 153, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .arabic-alert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #7c7ce8, #b491d4);
+}
+
+/* Enhanced Arabic Success Alert */
+[data-theme="dark"] .arabic-alert.success {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(26, 31, 26, 0.9);
+}
+
+[data-theme="dark"] .arabic-alert.success::before {
+  background: linear-gradient(180deg, #22c55e, #16a34a);
+}
+
+/* Enhanced Arabic Error Alert */
+[data-theme="dark"] .arabic-alert.error {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(31, 26, 26, 0.9);
+}
+
+[data-theme="dark"] .arabic-alert.error::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+/* Enhanced Arabic Warning Alert */
+[data-theme="dark"] .arabic-alert.warning {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(31, 29, 26, 0.9);
+}
+
+[data-theme="dark"] .arabic-alert.warning::before {
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+}
+
+/* Enhanced Arabic Tables */
+[data-theme="dark"] .arabic-table {
+  background: rgba(26, 26, 31, 0.8);
+  border: 1px solid rgba(124, 124, 232, 0.2);
+  border-radius: 15px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(153, 153, 255, 0.1);
+}
+
+[data-theme="dark"] .arabic-table th {
+  background: rgba(42, 42, 53, 0.8);
+  color: #f0f0f2;
+  font-family: var(--arabic-font-primary);
+  font-weight: 600;
+  padding: 16px;
+  text-shadow: var(--arabic-text-shadow);
+  border-bottom: 1px solid rgba(124, 124, 232, 0.2);
+}
+
+[data-theme="dark"] .arabic-table td {
+  color: #bababf;
+  font-family: var(--arabic-font-secondary);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(124, 124, 232, 0.1);
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .arabic-table tr:hover td {
+  background: rgba(42, 42, 53, 0.5);
+  color: #f0f0f2;
+}
+
+/* Enhanced Arabic Tooltips */
+[data-theme="dark"] .arabic-tooltip {
+  font-family: var(--arabic-font-primary);
+  background: rgba(26, 26, 31, 0.95);
+  border: 1px solid rgba(124, 124, 232, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #f0f0f2;
+  font-size: 0.875rem;
+  backdrop-filter: blur(15px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(153, 153, 255, 0.1);
+  text-shadow: var(--arabic-text-shadow);
+}
+
+/* Enhanced Arabic Breadcrumbs */
+[data-theme="dark"] .arabic-breadcrumb {
+  font-family: var(--arabic-font-primary);
+  color: #7a7a8a;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-theme="dark"] .arabic-breadcrumb a {
+  color: #bababf;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .arabic-breadcrumb a:hover {
+  color: #7c7ce8;
+  text-shadow: var(--arabic-text-glow);
+}
+
+[data-theme="dark"] .arabic-breadcrumb .separator {
+  color: #5a5a6a;
+  margin: 0 4px;
+}
+
+/* Enhanced Arabic Pagination */
+[data-theme="dark"] .arabic-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--arabic-font-primary);
+}
+
+[data-theme="dark"] .arabic-pagination .page-btn {
+  background: rgba(26, 26, 31, 0.8);
+  border: 1px solid rgba(124, 124, 232, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #bababf;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .arabic-pagination .page-btn:hover {
+  background: rgba(124, 124, 232, 0.2);
+  color: #f0f0f2;
+  border-color: #7c7ce8;
+  text-shadow: var(--arabic-text-glow);
+}
+
+[data-theme="dark"] .arabic-pagination .page-btn.active {
+  background: linear-gradient(135deg, #7c7ce8, #b491d4);
+  color: white;
+  border-color: transparent;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced Arabic Responsive Design */
+@media (max-width: 768px) {
+  [data-theme="dark"] .arabic-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  [data-theme="dark"] .arabic-heading {
+    font-size: 1.5rem;
+  }
+
+  [data-theme="dark"] .arabic-btn {
+    padding: 10px 24px;
+    font-size: 0.9rem;
+  }
+
+  [data-theme="dark"] .arabic-card {
+    padding: 16px;
+    margin: 8px;
+  }
+
+  [data-theme="dark"] .arabic-form {
+    padding: 20px;
+  }
+}
+
+/* Enhanced Arabic Print Styles */
+@media print {
+
+  [data-theme="dark"] .arabic-text,
+  [data-theme="dark"] .arabic-heading,
+  [data-theme="dark"] .arabic-body {
+    color: black !important;
+    background: white !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+}
