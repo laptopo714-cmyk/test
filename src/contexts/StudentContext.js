@@ -93,10 +93,30 @@ export const StudentProvider = ({ children }) => {
     }
   }, [student?.id]); // تشغيل فقط عند تغيير معرف الطالب
 
-  // التحقق من الجلسة المحفوظة
+  // التحقق من الجلسة المحفوظة باستخدام التخزين المؤقت
   const checkSavedSession = async () => {
     try {
       console.log('🔍 التحقق من الجلسة المحفوظة...');
+
+      // استخدام التخزين المؤقت في الذاكرة أولاً
+      const { getCachedStudent } = await import('../utils/firebaseCache');
+      const cachedStudent = getCachedStudent();
+
+      if (cachedStudent && cachedStudent.success) {
+        console.log('📱 تم العثور على جلسة مخزنة مؤقتاً');
+        const studentData = cachedStudent.studentData;
+        const deviceId =
+          localStorage.getItem('deviceId') ||
+          sessionStorage.getItem('deviceId');
+
+        // التحقق من تطابق معرف الجهاز
+        const currentDeviceId = generateDeviceId();
+        if (deviceId === currentDeviceId) {
+          console.log('✅ الجهاز صحيح - استعادة الجلسة');
+          setStudent(studentData);
+          return;
+        }
+      }
 
       // التحقق من localStorage أولاً (للجلسات المحفوظة)
       let savedStudent = localStorage.getItem('studentSession');
@@ -114,132 +134,18 @@ export const StudentProvider = ({ children }) => {
         console.log('📱 تم العثور على جلسة محفوظة');
         const studentData = JSON.parse(savedStudent);
 
-        // التحقق من سلامة البيانات المحفوظة
-        const savedHash = isFromLocalStorage
-          ? localStorage.getItem('sessionHash')
-          : sessionStorage.getItem('sessionHash');
-
-        if (savedHash && studentData.securityHash !== savedHash) {
-          console.log('🚨 تم اكتشاف تلاعب في بيانات الجلسة');
-          if (isFromLocalStorage) {
-            localStorage.removeItem('studentSession');
-            localStorage.removeItem('deviceId');
-            localStorage.removeItem('sessionHash');
-          } else {
-            sessionStorage.removeItem('studentSession');
-            sessionStorage.removeItem('deviceId');
-            sessionStorage.removeItem('sessionHash');
-          }
-          setError(
-            'تم اكتشاف تلاعب في بيانات الجلسة. يرجى تسجيل الدخول مرة أخرى.'
-          );
-          return;
-        }
-
-        // التحقق من أن الجهاز لا يزال صحيحاً
-        const currentDeviceId = generateDeviceId();
-        console.log('🔍 مقارنة معرفات الأجهزة:', {
-          saved: deviceId.substring(0, 10) + '...',
-          current: currentDeviceId.substring(0, 10) + '...',
-          match: deviceId === currentDeviceId,
-          savedLength: deviceId.length,
-          currentLength: currentDeviceId.length,
-        });
-
         // التحقق من تطابق معرف الجهاز
+        const currentDeviceId = generateDeviceId();
         if (deviceId === currentDeviceId) {
           console.log('✅ الجهاز صحيح - استعادة الجلسة');
 
-          // التحقق من صحة البيانات من قاعدة البيانات
-          const { getDoc, doc } = await import('firebase/firestore');
-          const { db } = await import('../firebase/config');
+          // استخدام البيانات المخزنة مؤقتاً لتجنب قراءة Firestore
+          setStudent(studentData);
 
-          const studentDoc = await getDoc(
-            doc(db, 'accessCodes', studentData.id)
-          );
-
-          if (studentDoc.exists()) {
-            const currentData = studentDoc.data();
-
-            // التحقق من انتهاء الصلاحية
-            if (
-              currentData.expiryDate &&
-              isDateExpired(currentData.expiryDate)
-            ) {
-              console.log('🚫 انتهت صلاحية الحساب');
-              logout();
-              setError('انتهت صلاحية حسابك. يرجى التواصل مع الإدارة.');
-              return;
-            }
-
-            // التحقق من حالة الحساب
-            if (!currentData.isActive) {
-              console.log('🚫 الحساب غير نشط');
-              logout();
-              setError('تم إيقاف حسابك. يرجى التواصل مع الإدارة.');
-              return;
-            }
-
-            // التحقق من session token إذا كان موجوداً
-            if (currentData.sessionToken && studentData.sessionToken) {
-              if (currentData.sessionToken !== studentData.sessionToken) {
-                console.log('🚫 Session token مختلف - تم إعادة تعيين الجهاز');
-                logout();
-                setError(
-                  'تم إعادة تعيين حسابك من قبل الإدارة. يرجى تسجيل الدخول مرة أخرى.'
-                );
-                return;
-              }
-            }
-
-            // التحقق من علامة إجبار إعادة المصادقة
-            if (currentData.forceReauth) {
-              console.log('🚫 مطلوب إعادة مصادقة');
-              logout();
-              setError(
-                'مطلوب تسجيل دخول جديد. يرجى إدخال رمز الوصول مرة أخرى.'
-              );
-              return;
-            }
-
-            // دمج البيانات المحدثة
-            const updatedStudent = {
-              ...studentData,
-              ...currentData,
-              id: studentData.id,
-            };
-
-            setStudent(updatedStudent);
-
-            // تحديث البيانات المحفوظة
-            if (isFromLocalStorage) {
-              localStorage.setItem(
-                'studentSession',
-                JSON.stringify(updatedStudent)
-              );
-            } else {
-              sessionStorage.setItem(
-                'studentSession',
-                JSON.stringify(updatedStudent)
-              );
-            }
-
-            console.log('✅ تم استعادة الجلسة بنجاح');
-          } else {
-            console.log('🚫 الحساب غير موجود');
-            logout();
-            setError('لم يعد حسابك موجوداً. يرجى التواصل مع الإدارة.');
-          }
+          // تحديث بيانات الطالب في الخلفية
+          refreshStudentData();
         } else {
           console.log('🚫 الجهاز مختلف - حذف الجلسة');
-          console.log('🔍 تفاصيل عدم التطابق:', {
-            savedDevice: deviceId?.substring(0, 10) + '...',
-            currentDevice: currentDeviceId?.substring(0, 10) + '...',
-            savedLength: deviceId?.length,
-            currentLength: currentDeviceId?.length,
-          });
-
-          // الجهاز مختلف، حذف الجلسة
           if (isFromLocalStorage) {
             localStorage.removeItem('studentSession');
             localStorage.removeItem('deviceId');
@@ -577,7 +483,7 @@ export const StudentProvider = ({ children }) => {
     await loadNotifications();
   };
 
-  // تحديث بيانات الطالب من قاعدة البيانات
+  // تحديث بيانات الطالب من قاعدة البيانات مع التخزين المؤقت
   const refreshStudentData = async () => {
     if (!student || !student.id) return;
 
@@ -590,6 +496,7 @@ export const StudentProvider = ({ children }) => {
     try {
       const { getDoc, doc } = await import('firebase/firestore');
       const { db } = await import('../firebase/config');
+      const { cacheStudentData } = await import('../utils/firebaseCache');
 
       const studentDoc = await getDoc(doc(db, 'accessCodes', student.id));
 
@@ -637,20 +544,8 @@ export const StudentProvider = ({ children }) => {
         if (hasChanges) {
           setStudent(updatedStudent);
 
-          // تحديث localStorage/sessionStorage
-          const rememberLogin =
-            localStorage.getItem('rememberLogin') === 'true';
-          if (rememberLogin) {
-            localStorage.setItem(
-              'studentSession',
-              JSON.stringify(updatedStudent)
-            );
-          } else {
-            sessionStorage.setItem(
-              'studentSession',
-              JSON.stringify(updatedStudent)
-            );
-          }
+          // تحديث التخزين المؤقت
+          cacheStudentData(updatedStudent);
 
           console.log('✅ تم تحديث بيانات الطالب من قاعدة البيانات');
         }

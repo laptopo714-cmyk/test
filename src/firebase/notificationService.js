@@ -13,6 +13,8 @@ import {
   orderBy,
   serverTimestamp,
   limit,
+  writeBatch,
+  arrayUnion,
 } from 'firebase/firestore';
 import { getAllAccessCodes } from './accessCodes';
 import { db } from './config';
@@ -198,89 +200,35 @@ export const getStudentHiddenNotifications = async studentId => {
   }
 };
 
-// الحصول على إشعارات طالب معين
+// الحصول على إشعارات طالب معين مع التخزين المؤقت
 export const getStudentNotifications = async (
   studentId,
   studentCategory = null
 ) => {
-  try {
-    const notifications = [];
-    const addedIds = new Set(); // لتجنب التكرار
+  const { getCachedData } = await import('../utils/firebaseCache');
 
-    // جلب قائمة الإشعارات المخفية للطالب
-    const hiddenNotifications = await getStudentHiddenNotifications(studentId);
-    const hiddenSet = new Set(hiddenNotifications);
-
-    // جلب الإشعارات العامة
+  return getCachedData(`notifications_${studentId}`, async () => {
     try {
-      const generalQuery = query(
-        collection(db, 'notifications'),
-        where('targetType', '==', 'all'),
-        orderBy('createdAt', 'desc'),
-        limit(50)
+      const notifications = [];
+      const addedIds = new Set(); // لتجنب التكرار
+
+      // جلب قائمة الإشعارات المخفية للطالب
+      const hiddenNotifications = await getStudentHiddenNotifications(
+        studentId
       );
-      const generalSnapshot = await getDocs(generalQuery);
+      const hiddenSet = new Set(hiddenNotifications);
 
-      generalSnapshot.forEach(doc => {
-        const data = doc.data();
-        if (
-          !addedIds.has(doc.id) &&
-          !hiddenSet.has(doc.id) && // تجاهل الإشعارات المخفية
-          (!data.expiryDate || new Date() <= data.expiryDate.toDate())
-        ) {
-          notifications.push({
-            id: doc.id,
-            ...data,
-          });
-          addedIds.add(doc.id);
-        }
-      });
-    } catch (error) {
-      console.warn('خطأ في جلب الإشعارات العامة:', error);
-    }
-
-    // جلب الإشعارات المخصصة
-    try {
-      const specificQuery = query(
-        collection(db, 'notifications'),
-        where('targetType', '==', 'selected'),
-        where('targetIds', 'array-contains', studentId),
-        orderBy('createdAt', 'desc'),
-        limit(50)
-      );
-      const specificSnapshot = await getDocs(specificQuery);
-
-      specificSnapshot.forEach(doc => {
-        const data = doc.data();
-        if (
-          !addedIds.has(doc.id) &&
-          !hiddenSet.has(doc.id) && // تجاهل الإشعارات المخفية
-          (!data.expiryDate || new Date() <= data.expiryDate.toDate())
-        ) {
-          notifications.push({
-            id: doc.id,
-            ...data,
-          });
-          addedIds.add(doc.id);
-        }
-      });
-    } catch (error) {
-      console.warn('خطأ في جلب الإشعارات المخصصة:', error);
-    }
-
-    // جلب إشعارات الفئة (إذا كان الطالب ينتمي لفئة)
-    if (studentCategory) {
+      // جلب الإشعارات العامة (نختار فقط الحقول المطلوبة)
       try {
-        const categoryQuery = query(
+        const generalQuery = query(
           collection(db, 'notifications'),
-          where('targetType', '==', 'category'),
-          where('targetCategory', '==', studentCategory),
+          where('targetType', '==', 'all'),
           orderBy('createdAt', 'desc'),
           limit(50)
         );
-        const categorySnapshot = await getDocs(categoryQuery);
+        const generalSnapshot = await getDocs(generalQuery);
 
-        categorySnapshot.forEach(doc => {
+        generalSnapshot.forEach(doc => {
           const data = doc.data();
           if (
             !addedIds.has(doc.id) &&
@@ -289,45 +237,120 @@ export const getStudentNotifications = async (
           ) {
             notifications.push({
               id: doc.id,
-              ...data,
+              title: data.title,
+              message: data.message,
+              type: data.type,
+              createdAt: data.createdAt,
+              priority: data.priority,
+              actionUrl: data.actionUrl,
             });
             addedIds.add(doc.id);
           }
         });
       } catch (error) {
-        console.warn('خطأ في جلب إشعارات الفئة:', error);
+        console.warn('خطأ في جلب الإشعارات العامة:', error);
       }
+
+      // جلب الإشعارات المخصصة (نختار فقط الحقول المطلوبة)
+      try {
+        const specificQuery = query(
+          collection(db, 'notifications'),
+          where('targetType', '==', 'selected'),
+          where('targetIds', 'array-contains', studentId),
+          orderBy('createdAt', 'desc'),
+          limit(50)
+        );
+        const specificSnapshot = await getDocs(specificQuery);
+
+        specificSnapshot.forEach(doc => {
+          const data = doc.data();
+          if (
+            !addedIds.has(doc.id) &&
+            !hiddenSet.has(doc.id) && // تجاهل الإشعارات المخفية
+            (!data.expiryDate || new Date() <= data.expiryDate.toDate())
+          ) {
+            notifications.push({
+              id: doc.id,
+              title: data.title,
+              message: data.message,
+              type: data.type,
+              createdAt: data.createdAt,
+              priority: data.priority,
+              actionUrl: data.actionUrl,
+            });
+            addedIds.add(doc.id);
+          }
+        });
+      } catch (error) {
+        console.warn('خطأ في جلب الإشعارات المخصصة:', error);
+      }
+
+      // جلب إشعارات الفئة (إذا كان الطالب ينتمي لفئة)
+      if (studentCategory) {
+        try {
+          const categoryQuery = query(
+            collection(db, 'notifications'),
+            where('targetType', '==', 'category'),
+            where('targetCategory', '==', studentCategory),
+            orderBy('createdAt', 'desc'),
+            limit(50)
+          );
+          const categorySnapshot = await getDocs(categoryQuery);
+
+          categorySnapshot.forEach(doc => {
+            const data = doc.data();
+            if (
+              !addedIds.has(doc.id) &&
+              !hiddenSet.has(doc.id) && // تجاهل الإشعارات المخفية
+              (!data.expiryDate || new Date() <= data.expiryDate.toDate())
+            ) {
+              notifications.push({
+                id: doc.id,
+                title: data.title,
+                message: data.message,
+                type: data.type,
+                createdAt: data.createdAt,
+                priority: data.priority,
+                actionUrl: data.actionUrl,
+              });
+              addedIds.add(doc.id);
+            }
+          });
+        } catch (error) {
+          console.warn('خطأ في جلب إشعارات الفئة:', error);
+        }
+      }
+
+      // ترتيب الإشعارات حسب التاريخ والأولوية
+      notifications.sort((a, b) => {
+        // ترتيب حسب الأولوية أولاً
+        const priorityOrder = { high: 3, normal: 2, low: 1 };
+        const aPriority = priorityOrder[a.priority] || 2;
+        const bPriority = priorityOrder[b.priority] || 2;
+
+        if (aPriority !== bPriority) {
+          return bPriority - aPriority;
+        }
+
+        // ثم حسب التاريخ
+        const aDate = a.createdAt?.toDate?.() || new Date(0);
+        const bDate = b.createdAt?.toDate?.() || new Date(0);
+        return bDate - aDate;
+      });
+
+      return {
+        success: true,
+        notifications: notifications,
+      };
+    } catch (error) {
+      console.error('خطأ في جلب الإشعارات:', error);
+      return {
+        success: false,
+        error: error.message,
+        notifications: [], // إرجاع قائمة فارغة بدلاً من undefined
+      };
     }
-
-    // ترتيب الإشعارات حسب التاريخ والأولوية
-    notifications.sort((a, b) => {
-      // ترتيب حسب الأولوية أولاً
-      const priorityOrder = { high: 3, normal: 2, low: 1 };
-      const aPriority = priorityOrder[a.priority] || 2;
-      const bPriority = priorityOrder[b.priority] || 2;
-
-      if (aPriority !== bPriority) {
-        return bPriority - aPriority;
-      }
-
-      // ثم حسب التاريخ
-      const aDate = a.createdAt?.toDate?.() || new Date(0);
-      const bDate = b.createdAt?.toDate?.() || new Date(0);
-      return bDate - aDate;
-    });
-
-    return {
-      success: true,
-      notifications: notifications,
-    };
-  } catch (error) {
-    console.error('خطأ في جلب الإشعارات:', error);
-    return {
-      success: false,
-      error: error.message,
-      notifications: [], // إرجاع قائمة فارغة بدلاً من undefined
-    };
-  }
+  });
 };
 
 // الحصول على جميع الإشعارات (للإدارة)
@@ -515,42 +538,31 @@ export const cleanupExpiredNotifications = async () => {
   }
 };
 
-// تحديد إشعار كمقروء
-export const markNotificationAsRead = async (notificationId, studentId) => {
+// تحديد إشعار كمقروء (مجموعة من الإشعارات)
+export const markNotificationsAsRead = async (notificationIds, studentId) => {
+  if (!notificationIds.length) return { success: true };
+
   try {
-    const notificationRef = doc(db, 'notifications', notificationId);
+    const batch = writeBatch(db);
 
-    // الحصول على الإشعار الحالي
-    const notificationDoc = await getDocs(
-      query(
-        collection(db, 'notifications'),
-        where('__name__', '==', notificationId)
-      )
-    );
+    notificationIds.forEach(notificationId => {
+      const notificationRef = doc(db, 'notifications', notificationId);
+      batch.update(notificationRef, {
+        readBy: arrayUnion(studentId),
+      });
+    });
 
-    if (!notificationDoc.empty) {
-      const currentData = notificationDoc.docs[0].data();
-      const currentReadBy = currentData.readBy || [];
-
-      // إضافة الطالب إلى قائمة الذين قرأوا الإشعار إذا لم يكن موجوداً
-      if (!currentReadBy.includes(studentId)) {
-        await updateDoc(notificationRef, {
-          readBy: [...currentReadBy, studentId],
-        });
-      }
-    }
-
-    return {
-      success: true,
-      message: 'تم تحديد الإشعار كمقروء',
-    };
+    await batch.commit();
+    return { success: true };
   } catch (error) {
-    console.error('خطأ في تحديد الإشعار كمقروء:', error);
-    return {
-      success: false,
-      error: error.message,
-    };
+    console.error('خطأ في تحديد الإشعارات كمقروءة:', error);
+    return { success: false, error: error.message };
   }
+};
+
+// تحديد إشعار كمقروء (واحد فقط - للحفاظ على التوافق)
+export const markNotificationAsRead = async (notificationId, studentId) => {
+  return markNotificationsAsRead([notificationId], studentId);
 };
 
 // إخفاء الإشعارات المقروءة للطالب (بدلاً من حذفها)

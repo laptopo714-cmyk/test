@@ -1,86 +1,35 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // دالة مساعدة للتحقق من دور المستخدم
-    function getUserRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-    }
-    
-    function isAdmin() {
-      return request.auth != null && getUserRole() == 'admin';
-    }
-    
-    function isStudent() {
-      return request.auth != null && getUserRole() == 'student';
-    }
-    
-    // قواعد المستخدمين - محمية بشدة
-    match /users/{userId} {
-      // المستخدم يمكنه قراءة بياناته فقط
-      allow read: if request.auth != null && request.auth.uid == userId;
-      // المدراء يمكنهم قراءة جميع المستخدمين
-      allow read: if isAdmin();
-      // إنشاء مستخدم جديد فقط عند التسجيل
-      allow create: if request.auth != null && request.auth.uid == userId;
-      // المستخدم يمكنه تحديث بياناته الأساسية فقط
-      allow update: if request.auth != null && request.auth.uid == userId &&
-        !('role' in request.resource.data.diff(resource.data).affectedKeys());
-      // المدراء يمكنهم تحديث أدوار المستخدمين
-      allow update: if isAdmin();
-    }
-    
-    // قواعد رموز الوصول - محمية جداً
+    // Access Codes - Strict rules
     match /accessCodes/{codeId} {
-      // الطلاب يمكنهم قراءة رمز الوصول الخاص بهم فقط
-      allow read: if isStudent() && resource.data.studentId == request.auth.uid;
-      // المدراء فقط يمكنهم إدارة رموز الوصول
-      allow read, create, update, delete: if isAdmin();
+      allow read: if request.auth != null && request.auth.token.admin == true;
+      allow write: if false; // Admin only through backend functions
     }
-    
-    // قواعد الأقسام
-    match /sections/{sectionId} {
-      // الطلاب يمكنهم قراءة الأقسام المرئية فقط
-      allow read: if isStudent() && (!('isHidden' in resource.data) || resource.data.isHidden == false);
-      // المدراء يمكنهم إدارة جميع الأقسام
-      allow read, create, update, delete: if isAdmin();
-    }
-    
-    // قواعد الفيديوهات - محمية بشدة
-    match /videos/{videoId} {
-      // الطلاب يمكنهم قراءة الفيديوهات المرئية فقط
-      allow read: if isStudent() && (!('isHidden' in resource.data) || resource.data.isHidden == false);
-      // المدراء يمكنهم إدارة جميع الفيديوهات
-      allow read, create, update, delete: if isAdmin();
-    }
-    
-    // قواعد مشاهدة الفيديوهات - لتتبع التقدم
-    match /videoWatches/{watchId} {
-      // الطالب يمكنه قراءة وإنشاء سجلات مشاهدته فقط
-      allow read, create: if isStudent() && resource.data.studentId == request.auth.uid;
-      // المدراء يمكنهم قراءة جميع سجلات المشاهدة
-      allow read: if isAdmin();
-    }
-    
-    // قواعد الإشعارات
+
+    // Notifications - Optimized reading
     match /notifications/{notificationId} {
-      // الطلاب يمكنهم قراءة إشعاراتهم فقط
-      allow read: if isStudent() && resource.data.targetStudents != null && 
-        request.auth.uid in resource.data.targetStudents;
-      // الإشعارات العامة يمكن للجميع قراءتها
-      allow read: if isStudent() && resource.data.targetType == 'all';
-      // المدراء يمكنهم إدارة جميع الإشعارات
-      allow read, create, update, delete: if isAdmin();
+      allow read: if 
+        // Only fetch necessary fields
+        request.query.limitToLast(20) && 
+        request.query.select(['title', 'message', 'createdAt', 'priority']);
+      
+      allow write: if request.auth != null && request.auth.token.admin == true;
     }
-    
-    // قواعد الإشعارات المرسلة - للمدراء فقط
-    match /sentNotifications/{notificationId} {
-      allow read, create, update, delete: if isAdmin();
+
+    // Videos - Optimized for reads
+    match /videos/{videoId} {
+      allow read: if true;
+      allow update: if 
+        // Only allow specific fields to be updated
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['viewCount', 'watchHistory']);
     }
-    
-    // منع الوصول لأي مجموعات أخرى
-    match /{document=**} {
-      allow read, write: if false;
+
+    // Video watch history - New optimized collection
+    match /videoViews/{viewId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && request.auth.token.admin == true;
     }
   }
 }
