@@ -38,62 +38,6 @@ export const StudentProvider = ({ children }) => {
     checkSavedSession();
   }, []);
 
-  // التحقق الدوري من صحة الجلسة كل 5 دقائق
-  useEffect(() => {
-    if (!student) return;
-
-    const sessionCheckInterval = setInterval(async () => {
-      // تجنب التحقق أثناء مشاهدة الفيديو
-      if (isOnVideoPage()) {
-        console.log('🎬 تم تخطي فحص الجلسة - الطالب يشاهد فيديو');
-        return;
-      }
-
-      console.log('🔄 فحص دوري لصحة الجلسة...');
-      const deviceId = generateDeviceId();
-
-      const result = await validateActiveSession(
-        student.id,
-        student.sessionToken,
-        deviceId
-      );
-
-      if (!result.success) {
-        console.log('❌ الجلسة غير صحيحة:', result.error);
-
-        // تحقق إضافي: إذا كانت المشكلة في معرف الجهاز، حاول مرة أخرى
-        if (result.error.includes('جهاز') || result.error.includes('device')) {
-          console.log('🔄 محاولة إعادة التحقق من معرف الجهاز...');
-
-          // انتظار قصير ثم محاولة مرة أخرى
-          setTimeout(async () => {
-            const retryResult = await validateActiveSession(
-              student.id,
-              student.sessionToken,
-              deviceId
-            );
-
-            if (!retryResult.success) {
-              setError(
-                'هذا الرمز مسجل على جهاز آخر. لا يمكن استخدامه على أكثر من جهاز واحد. يرجى التواصل مع الإدارة إذا كنت تحتاج لتغيير الجهاز.'
-              );
-              logout();
-            } else {
-              console.log('✅ تم التحقق بنجاح في المحاولة الثانية');
-            }
-          }, 2000);
-        } else {
-          setError(result.error);
-          logout();
-        }
-      } else {
-        console.log('✅ الجلسة صحيحة');
-      }
-    }, 5 * 60 * 1000); // كل 5 دقائق
-
-    return () => clearInterval(sessionCheckInterval);
-  }, [student?.id, student?.sessionToken]);
-
   // مراقبة تغييرات localStorage لاكتشاف تسجيل الدخول من أجهزة أخرى
   useEffect(() => {
     const handleStorageChange = e => {
@@ -430,6 +374,7 @@ export const StudentProvider = ({ children }) => {
       'studentVideos',
       'sessionHash',
       'rememberLogin',
+      'sectionsCache', // إضافة مسح ذاكرة التخزين المؤقت للأقسام
     ];
 
     keysToRemove.forEach(key => {
@@ -815,61 +760,6 @@ export const StudentProvider = ({ children }) => {
       clearInterval(pathCheckInterval);
     };
   }, []);
-
-  // التحقق من الجلسة دورياً وتحديث الإشعارات
-  useEffect(() => {
-    if (student) {
-      const sessionInterval = setInterval(() => {
-        // منع التحديث إذا كان الطالب في صفحة فيديو لتجنب انقطاع المشاهدة
-        if (!isWatchingVideo && !isOnVideoPage()) {
-          console.log('🔄 تحديث الجلسة...');
-          validateSession();
-        } else {
-          console.log('🎬 تم تخطي تحديث الجلسة - الطالب يشاهد فيديو');
-        }
-      }, 5 * 60 * 1000); // كل 5 دقائق
-
-      // تحديث بيانات الطالب كل 5 دقائق (للتحقق من الصلاحية)
-      const studentDataInterval = setInterval(() => {
-        // منع التحديث إذا كان الطالب في صفحة فيديو لتجنب انقطاع المشاهدة
-        if (!isWatchingVideo && !isOnVideoPage()) {
-          console.log('🔄 تحديث بيانات الطالب...');
-          refreshStudentData();
-        } else {
-          console.log('🎬 تم تخطي تحديث بيانات الطالب - الطالب يشاهد فيديو');
-        }
-      }, 5 * 60 * 1000); // كل 5 دقائق
-
-      // تحديث الإشعارات كل دقيقة
-      const notificationInterval = setInterval(() => {
-        // منع التحديث إذا كان الطالب في صفحة فيديو لتجنب انقطاع المشاهدة
-        if (!isWatchingVideo && !isOnVideoPage()) {
-          console.log('🔄 تحديث الإشعارات...');
-          loadNotifications();
-        } else {
-          console.log('🎬 تم تخطي تحديث الإشعارات - الطالب يشاهد فيديو');
-        }
-      }, 60 * 1000); // كل دقيقة
-
-      // تحديث الفيديوهات كل 5 دقائق
-      const videoInterval = setInterval(() => {
-        // منع التحديث إذا كان الطالب في صفحة فيديو لتجنب انقطاع المشاهدة
-        if (!isWatchingVideo && !isOnVideoPage()) {
-          console.log('🔄 تحديث قائمة الفيديوهات...');
-          loadStudentData();
-        } else {
-          console.log('🎬 تم تخطي تحديث الفيديوهات - الطالب يشاهد فيديو');
-        }
-      }, 5 * 60 * 1000); // كل 5 دقائق
-
-      return () => {
-        clearInterval(sessionInterval);
-        clearInterval(studentDataInterval);
-        clearInterval(notificationInterval);
-        clearInterval(videoInterval);
-      };
-    }
-  }, [student, isWatchingVideo]);
 
   const value = {
     // حالة الطالب

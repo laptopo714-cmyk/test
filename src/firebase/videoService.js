@@ -94,8 +94,25 @@ export const createVideo = async videoData => {
   }
 };
 
-// الحصول على جميع الأقسام
+// الحصول على جميع الأقسام مع التخزين المؤقت
 export const getAllSections = async () => {
+  // فحص التخزين المؤقت أولاً
+  const cacheKey = 'sectionsCache';
+  const cachedData = localStorage.getItem(cacheKey);
+  const now = Date.now();
+
+  if (cachedData) {
+    const { sections, timestamp } = JSON.parse(cachedData);
+    // إذا مر أقل من 24 ساعة، استخدام البيانات المخزنة
+    if (now - timestamp < 24 * 60 * 60 * 1000) {
+      console.log('📦 استخدام الأقسام المخزنة محلياً');
+      return {
+        success: true,
+        sections: sections,
+      };
+    }
+  }
+
   try {
     const sectionsQuery = query(
       collection(db, 'sections'),
@@ -111,12 +128,32 @@ export const getAllSections = async () => {
       });
     });
 
+    // تحديث التخزين المؤقت
+    localStorage.setItem(
+      cacheKey,
+      JSON.stringify({
+        sections: sections,
+        timestamp: now,
+      })
+    );
+
     return {
       success: true,
       sections: sections,
     };
   } catch (error) {
     console.error('خطأ في جلب الأقسام:', error);
+
+    // إذا فشل الاتصال، حاول استخدام النسخة المخزنة حتى لو انتهت صلاحيتها
+    if (cachedData) {
+      console.log('⚠️ استخدام الأقسام المخزنة رغم انتهاء الصلاحية');
+      const { sections } = JSON.parse(cachedData);
+      return {
+        success: true,
+        sections: sections,
+      };
+    }
+
     return {
       success: false,
       error: error.message,

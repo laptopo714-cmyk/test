@@ -60,3 +60,22 @@ firebase deploy
 
 © 2025 . جميع الحقوق محفوظة لمسيو أكرم إبراهيم  
 تطوير: كريم عطية عطية
+
+### Admin Credentials Update
+
+Admin credentials are stored in `src/pages/Admin/SecretAdminLogin.js` with basic Base64 obfuscation. To update:
+
+1. Encode new credentials:
+   ```bash
+   echo -n "username" | base64
+   echo -n "password" | base64
+   ```
+2. Update the `encodedUsername` and `encodedPassword` variables
+3. Update the demo credentials section with plaintext values
+4. Add security warning about hardcoded credentials
+
+**Warning:** This is not production-grade security. For production use:
+
+- Move credentials to environment variables
+- Implement proper encryption
+- Remove demo credentials section

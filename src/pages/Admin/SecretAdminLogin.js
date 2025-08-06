@@ -32,9 +32,14 @@ const SecretAdminLogin = () => {
   const navigate = useNavigate();
 
   // Admin credentials (في التطبيق الحقيقي، يجب أن تكون في قاعدة البيانات مع تشفير)
+  // WARNING: Hardcoded credentials are not secure for production
+  // Consider moving to environment variables or secure storage
+  const encodedUsername = 'a2ltbzEyMw=='; // Base64 for kimo123
+  const encodedPassword = 'a2ltb0AxMjM='; // Base64 for kimo@123
+
   const ADMIN_CREDENTIALS = {
-    username: 'admin',
-    password: 'Admin@2024',
+    username: atob(encodedUsername),
+    password: atob(encodedPassword),
   };
 
   // التحقق من وجود جلسة إدارة
@@ -313,15 +318,15 @@ const SecretAdminLogin = () => {
         </Typography>
         <Box sx={{ textAlign: 'center', color: 'text.secondary' }}>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            <strong>اسم المستخدم:</strong> admin
+            <strong>اسم المستخدم:</strong> kimo123
           </Typography>
           <Typography variant="body2">
-            <strong>كلمة المرور:</strong> Admin@2024
+            <strong>كلمة المرور:</strong> kimo@123
           </Typography>
         </Box>
         <Alert severity="info" sx={{ mt: 2 }}>
-          هذه بيانات تجريبية للاختبار فقط. في النظام الحقيقي، يجب تغيير هذه
-          البيانات وتشفيرها.
+          تحذير أمني: هذه بيانات الدخول الحقيقية. في النظام الحقيقي، يجب إزالة
+          هذا القسم بعد الاختبار.
         </Alert>
       </Paper>
 
